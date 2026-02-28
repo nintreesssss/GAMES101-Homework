@@ -49,10 +49,12 @@ int main(){
     std::cout << i * v << std::endl;
 
     //HomeWork 0
-    Eigen::Vector3i p(2,1,1);
+    Eigen::Vector3f p(2.0f,1.0f,1.0f);
     Eigen::Matrix3f k;
-    k << sqrt(2) / 2,-sqrt(2) / 2,1,sqrt(2) / 2,sqrt(2) / 2,2,0,0,1;
-    std::cout << k * i << std::endl;
+    k << sqrt(2) / 2,-sqrt(2) / 2,1,
+    sqrt(2) / 2,sqrt(2) / 2,2,
+    0,0,1;
+    std::cout << k * p << std::endl;
 
     return 0;
 }

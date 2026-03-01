@@ -42,9 +42,24 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
 
     Eigen::Matrix4f projection = Eigen::Matrix4f::Identity();
 
-    // TODO: Implement this function
-    // Create the projection matrix for the given parameters.
-    // Then return it.
+    float rad = eye_fov * MY_PI / 180.0f;
+    float t = zNear * std::tan(eye_fov / 2);
+    float r = aspect_ratio * t;
+
+    Eigen::Matrix4f persp = Eigen::Matrix4f::Zero();
+    persp(0,0) = zNear;
+    persp(1,1) = zNear;
+    persp(2,2) = zNear + zFar;
+    persp(2,3) = -zNear * zFar;
+    persp(3,2) = 1.0f;
+
+    Eigen::Matrix4f ortho = Eigen::Matrix4f::Identity();
+    ortho(0,0) = 1.0f / r;
+    ortho(1,1) = 1.0f / t;
+    ortho(2,2) = 2.0f / (zNear - zFar);
+    ortho(2,3) = (zNear + zFar) / (zNear - zFar);
+
+    projection = ortho * persp;
 
     return projection;
 }

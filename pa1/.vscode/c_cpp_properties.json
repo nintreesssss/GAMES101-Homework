@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${vcpkgRoot}/x64-mingw-dynamic/include",
-                "${vcpkgRoot}/x64-windows/include"
+                "${vcpkgRoot}/x64-windows/include",
+                "${vcpkgRoot}/x64-mingw-dynamic/include/opencv4"
             ],
             "defines": [
                 "_DEBUG",

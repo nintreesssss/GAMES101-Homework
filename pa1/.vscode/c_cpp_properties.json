@@ -4,9 +4,11 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${vcpkgRoot}/x64-mingw-dynamic/include",
-                "${vcpkgRoot}/x64-windows/include",
-                "${vcpkgRoot}/x64-mingw-dynamic/include/opencv4"
+                "D:/vcpkg/installed/x64-mingw-dynamic/include",
+                "D:/vcpkg/installed/x64-mingw-dynamic/include/eigen3",
+                "D:/vcpkg/installed/x64-mingw-dynamic/include/eigen3/Eigen",
+                "D:/vcpkg/installed/x64-mingw-dynamic/include/opencv4",
+                "D:/vcpkg/installed/x64-windows/include"
             ],
             "defines": [
                 "_DEBUG",
@@ -20,5 +22,14 @@
             "compilerPath": "D:/mingw64/bin/gcc.exe"
         }
     ],
-    "version": 4
+    "version": 4,
+    "browse": {
+        "path": [
+            "${workspaceFolder}",
+            "D:/vcpkg/installed/x64-mingw-dynamic/include",
+            "D:/vcpkg/installed/x64-mingw-dynamic/include/eigen3",
+            "D:/vcpkg/installed/x64-mingw-dynamic/include/opencv4"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+    }
 }

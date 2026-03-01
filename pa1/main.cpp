@@ -1,6 +1,6 @@
 #include "Triangle.hpp"
 #include "rasterizer.hpp"
-#include <eigen3/Eigen/Eigen>
+#include <Eigen/Dense>
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
@@ -26,9 +26,10 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle)
     Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
 
     Eigen::Matrix4f translate;
-    translate << std::cos(rotation_angle),std::sin(rotation_angle),0,0,
-                -std::sin(rotation_angle),std::cos(rotation_angle),0,0,
-                0,0,0,1;
+    translate << std::cos(rotation_angle), std::sin(rotation_angle), 0, 0,
+                 -std::sin(rotation_angle), std::cos(rotation_angle), 0, 0,
+                 0, 0, 1, 0,
+                 0, 0, 0, 1;
 
     model = model * translate;
 
@@ -66,6 +67,7 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
 
 int main(int argc, const char** argv)
 {
+    std::cerr << "main start\n";
     float angle = 0;
     bool command_line = false;
     std::string filename = "output.png";
@@ -95,17 +97,23 @@ int main(int argc, const char** argv)
     int frame_count = 0;
 
     if (command_line) {
+        std::cerr << "command_line mode\n";
         r.clear(rst::Buffers::Color | rst::Buffers::Depth);
 
         r.set_model(get_model_matrix(angle));
         r.set_view(get_view_matrix(eye_pos));
         r.set_projection(get_projection_matrix(45, 1, 0.1, 50));
 
+        std::cerr << "before draw\n";
         r.draw(pos_id, ind_id, rst::Primitive::Triangle);
+        std::cerr << "after draw\n";
         cv::Mat image(700, 700, CV_32FC3, r.frame_buffer().data());
+        std::cerr << "created image, rows=" << image.rows << " cols=" << image.cols << " channels=" << image.channels() << " empty=" << image.empty() << "\n";
         image.convertTo(image, CV_8UC3, 1.0f);
+        std::cerr << "converted image, rows=" << image.rows << " cols=" << image.cols << " channels=" << image.channels() << " empty=" << image.empty() << "\n";
 
-        cv::imwrite(filename, image);
+        bool wrote = cv::imwrite(filename, image);
+        std::cerr << "imwrite returned " << wrote << ", file= " << filename << "\n";
 
         return 0;
     }

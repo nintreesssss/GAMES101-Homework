@@ -59,7 +59,10 @@ static bool insideTriangle(int x, int y, const Vector3f* _v)
     float cross2 = EgdeCross(vb, vc, p);
     float cross3 = EgdeCross(vc, va, p);
 
-    return cross1 >= 0 && cross2 >= 0 && cross3 >= 0;
+    bool b1 = cross1 >= 0 && cross2 >= 0 && cross3 >= 0;
+    bool b2 = cross1 <= 0 && cross2 <= 0 && cross3 <= 0;
+
+    return b1 || b2;
 }
 
 static std::tuple<float, float, float> computeBarycentric2D(float x, float y, const Vector3f* v)

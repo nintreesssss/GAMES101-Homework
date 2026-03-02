@@ -26,12 +26,12 @@ Eigen::Matrix4f get_model_matrix(float rotation_angle)
     Eigen::Matrix4f model = Eigen::Matrix4f::Identity();
 
     Eigen::Matrix4f translate;
-    translate << std::cos(rotation_angle), std::sin(rotation_angle), 0, 0,
-                -std::sin(rotation_angle), std::cos(rotation_angle), 0, 0,
+    translate << std::cos(rotation_angle / 180 * MY_PI), std::sin(rotation_angle / 180 * MY_PI), 0, 0,
+                -std::sin(rotation_angle / 180 * MY_PI), std::cos(rotation_angle / 180 * MY_PI), 0, 0,
                 0, 0, 1, 0,
                 0, 0, 0, 1;
 
-    model = model * translate;
+    model = translate * model;
 
     return model;
 }
@@ -46,21 +46,26 @@ Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio,
     float rad = eye_fov * MY_PI / 180.0f;
     float t = zNear * std::tan(eye_fov / 2);
     float r = aspect_ratio * t;
+    float n = -zNear;
+    float f = -zFar;
 
-    Eigen::Matrix4f persp = Eigen::Matrix4f::Zero();
-    persp(0,0) = zNear;
-    persp(1,1) = zNear;
-    persp(2,2) = zNear + zFar;
-    persp(2,3) = -zNear * zFar;
-    persp(3,2) = 1.0f;
+    Eigen::Matrix4f persp2ortho = Eigen::Matrix4f::Zero();
+    persp2ortho(0,0) = n;
+    persp2ortho(1,1) = n;
+    persp2ortho(2,2) = n + f;
+    persp2ortho(2,3) = -n * f;
+    persp2ortho(3,2) = 1.0f;
+    
+    Eigen::Matrix4f ortho_scale = Eigen::Matrix4f::Identity();
+    ortho_scale << 1.0f / r, 0, 0, 0,
+                   0, 1.0f / t, 0, 0,
+                   0, 0, 2.0f / (n - f), 0,
+                   0, 0, 0, 1;
 
-    Eigen::Matrix4f ortho = Eigen::Matrix4f::Identity();
-    ortho(0,0) = 1.0f / r;
-    ortho(1,1) = 1.0f / t;
-    ortho(2,2) = 2.0f / (zNear - zFar);
-    ortho(2,3) = (zNear + zFar) / (zNear - zFar);
+    Eigen::Matrix4f ortho_trans = Eigen::Matrix4f::Identity();
+    ortho_trans(2,3) = -(n + f) / 2;
 
-    projection = ortho * persp;
+    projection = ortho_scale * ortho_trans * persp2ortho;
 
     return projection;
 }

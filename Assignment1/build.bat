@@ -13,12 +13,13 @@ echo 正在编译...
 g++ -std=c++17 -O2 -o rasterizer.exe ^
     main.cpp rasterizer.cpp Triangle.cpp ^
     -I"%VCPKG%/include" ^
+    -I"%VCPKG%/include/opencv4" ^
     -I"%VCPKG%/include/eigen3" ^
     -L"%VCPKG%/lib" ^
-    -lopencv_core ^
-    -lopencv_imgproc ^
-    -lopencv_highgui ^
-    -lopencv_imgcodecs
+    -lopencv_core4 ^
+    -lopencv_imgproc4 ^
+    -lopencv_highgui4 ^
+    -lopencv_imgcodecs4
 
 if %ERRORLEVEL% == 0 (
     echo 编译成功！运行...

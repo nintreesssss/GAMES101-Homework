@@ -131,6 +131,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t) {
     float min_y = std::min(std::min(t.v[0].y(), t.v[1].y()), t.v[2].y());
     float max_y = std::max(std::max(t.v[0].y(), t.v[1].y()), t.v[2].y());
 
+    // Clamp the bounding box to the screen dimensions
     int x0 = std::max(0, (int)std::floor(min_x));
     int x1 = std::min(width - 1, (int)std::ceil(max_x));
     int y0 = std::max(0, (int)std::floor(min_y));

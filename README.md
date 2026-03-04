@@ -36,4 +36,9 @@
 ```
 ---
 ## Assignment 2
-![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment2/screenshot.png)
+*未使用SSAA:*  
+![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment2/output.png)  
+
+  
+*使用SSAA:*  
+![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment2/output_ssaa.png)  

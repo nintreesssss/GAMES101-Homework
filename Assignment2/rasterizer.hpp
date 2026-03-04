@@ -72,6 +72,8 @@ namespace rst
 
         void draw(pos_buf_id pos_buffer, ind_buf_id ind_buffer, col_buf_id col_buffer, Primitive type);
 
+        void set_ssaa(bool enable);
+
         std::vector<Eigen::Vector3f>& frame_buffer() { return frame_buf; }
 
     private:
@@ -93,6 +95,14 @@ namespace rst
         std::vector<Eigen::Vector3f> frame_buf;
 
         std::vector<float> depth_buf;
+
+        // SSAA 2x2 per-sample buffers (4 samples per pixel)
+        int samples_per_pixel = 4;
+        std::vector<Eigen::Vector3f> sample_color_buf; // size = w*h*4
+        std::vector<float> sample_depth_buf; // size = w*h*4
+        void resolve(); // resolve samples into frame_buf
+        // runtime toggle for SSAA
+        bool use_ssaa = false;
         int get_index(int x, int y);
 
         int width, height;

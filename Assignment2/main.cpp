@@ -75,6 +75,9 @@ int main(int argc, const char** argv)
 
     rst::rasterizer r(700, 700);
 
+    // Enable 2x2 SSAA
+    r.set_ssaa(true);
+
     Eigen::Vector3f eye_pos = {0,0,5};
 
 

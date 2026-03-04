@@ -42,3 +42,8 @@
   
 *使用SSAA:*  
 ![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment2/output_ssaa.png)  
+
+*对比图:*
+![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment2/contrast.png)  
+
+右边使用了SSAA，左边未使用，可以明显看出SSAA模糊了三角形的锯齿边缘

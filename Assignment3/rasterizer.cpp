@@ -280,7 +280,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
     // Use: Instead of passing the triangle's color directly to the frame buffer, pass the color to the shaders first to get the final color;
     // Use: auto pixel_color = fragment_shader(payload);
 
- 
+
 }
 
 void rst::rasterizer::set_model(const Eigen::Matrix4f& m)

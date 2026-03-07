@@ -148,6 +148,7 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
     Eigen::Vector3f normal = payload.normal;
 
     Eigen::Vector3f result_color = {0, 0, 0};
+
     for (auto& light : lights)
     {
         Eigen::Vector3f Light_dir = (light.position - point).normalized();
@@ -160,14 +161,13 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
         Eigen::Vector3f I_r2 = light.intensity / r2;
 
         Eigen::Vector3f Ld = kd.cwiseProduct(I_r2);
-        Ld *= std::max(0.0f, normal.normalized().dot(Light_dir));
+        Ld *= std::max(0.0f, normal.dot(Light_dir));
 
         Eigen::Vector3f Ls = ks.cwiseProduct(I_r2);
-        Ls *= std::pow(std::max(0.0f, normal.normalized().dot(Half_dir)), p);
+        Ls *= std::pow(std::max(0.0f, normal.dot(Half_dir)), p);
 
-        result_color += (La + Ld + Ls);
+        result_color += (Ld + Ls + La);
     }
-
     return result_color * 255.f;
 }
 

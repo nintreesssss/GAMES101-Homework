@@ -1,0 +1,3 @@
+[ WARN:0@0.003] global loadsave.cpp:275 findDecoder imread_('../models/spot/hmap.jpg'): can't open/read file: check file path/integrity
+OpenCV: terminate handler is called! The last OpenCV error is:
+OpenCV(4.12.0) Error: Assertion failed (!_src.empty()) in cvtColor, file D:/vcpkg/buildtrees/opencv4/src/4.12.0-d26ced7cc8.clean/modules/imgproc/src/color.cpp, line 199

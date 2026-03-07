@@ -91,13 +91,23 @@ struct light
 Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
 {
     Eigen::Vector3f return_color = {0, 0, 0};
+    Eigen::Vector3f texture_color;
     if (payload.texture)
     {
         // TODO: Get the texture value at the texture coordinates of the current fragment
-
+        float x = payload.tex_coords.x();
+        float y = payload.tex_coords.y();
+        if (x < 0 || x > 1 || y < 0 || y > 1)
+        {
+            std::cout << "Invalid texture coordinates: (" << x << ", " << y << ")" << std::endl;
+            texture_color << return_color.x(), return_color.y(), return_color.z();
+        }else
+        {
+            texture_color = payload.texture->getColor(x, y);
+        }
+        
     }
-    Eigen::Vector3f texture_color;
-    texture_color << return_color.x(), return_color.y(), return_color.z();
+    //texture_color << return_color.x(), return_color.y(), return_color.z();
 
     Eigen::Vector3f ka = Eigen::Vector3f(0.005, 0.005, 0.005);
     Eigen::Vector3f kd = texture_color / 255.f;
@@ -120,9 +130,22 @@ Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
 
     for (auto& light : lights)
     {
-        // TODO: For each light source in the code, calculate what the *ambient*, *diffuse*, and *specular* 
-        // components are. Then, accumulate that result on the *result_color* object.
+        Eigen::Vector3f Light_dir = (light.position - point).normalized();
+        Eigen::Vector3f View_dir = (eye_pos - point).normalized();
+        Eigen::Vector3f Half_dir = (View_dir + Light_dir).normalized();
 
+        Eigen::Vector3f La = ka.cwiseProduct(amb_light_intensity);
+
+        float r2 = (light.position - point).dot(light.position - point);
+        Eigen::Vector3f I_r2 = light.intensity / r2;
+
+        Eigen::Vector3f Ld = kd.cwiseProduct(I_r2);
+        Ld *= std::max(0.0f, normal.dot(Light_dir));
+
+        Eigen::Vector3f Ls = ks.cwiseProduct(I_r2);
+        Ls *= std::pow(std::max(0.0f, normal.dot(Half_dir)), p);
+
+        result_color += (Ld + Ls + La);
     }
 
     return result_color * 255.f;

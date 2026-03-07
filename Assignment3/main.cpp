@@ -50,16 +50,43 @@ Eigen::Matrix4f get_model_matrix(float angle)
 Eigen::Matrix4f get_projection_matrix(float eye_fov, float aspect_ratio, float zNear, float zFar)
 {
     // TODO: Use the same projection matrix from the previous assignments
-    float rad = eye_fov * MY_PI / 180.f;
-    float top = zNear * std::tan(rad / 2);
-    float right = top * aspect_ratio;
-    float near = 1 * zNear;
-    float far = 1 * zFar;
     Eigen::Matrix4f projection;
-    projection << near/right, 0, 0, 0,
-                  0, near/top, 0, 0,
-                  0, 0, (near+far)/(near-far), (2*near*far)/(near-far),
-                  0, 0, -1, 0;
+
+    float angel = eye_fov / 180.0 * MY_PI;
+    float t = zNear * std::tan(angel / 2);
+    float r = t * aspect_ratio;
+    float l = -r;
+    float b = -t;
+
+    Eigen::Matrix4f MorthoScale(4, 4);
+    MorthoScale << 2 / (r - l), 0, 0, 0,
+        0, 2 / (t - b), 0, 0,
+        0, 0, 2 / (zFar - zNear), 0,
+        0, 0, 0, 1;
+
+    Eigen::Matrix4f MorthoPos(4, 4);
+    MorthoPos << 1, 0, 0, -(r + l) / 2,
+        0, 1, 0, -(t + b) / 2,
+        0, 0, 1, -(zNear + zFar) / 2,
+        0, 0, 0, 1;
+
+    Eigen::Matrix4f Mpersp2ortho(4, 4);
+
+    Mpersp2ortho << zNear, 0, 0, 0,
+        0, zNear, 0, 0,
+        0, 0, zNear + zFar, -zNear * zFar,
+        0, 0, 1, 0;
+
+    Eigen::Matrix4f Mt(4, 4);
+    Mt << 1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, -1, 0,
+        0, 0, 0, 1;
+
+    Mpersp2ortho = Mpersp2ortho * Mt;
+
+    projection = MorthoScale * MorthoPos * Mpersp2ortho * projection;
+
     return projection;
 }
 
@@ -132,7 +159,7 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
 {
     Eigen::Vector3f ka = Eigen::Vector3f(0.005, 0.005, 0.005);
     Eigen::Vector3f kd = payload.color;
-    Eigen::Vector3f ks = Eigen::Vector3f(0.7937, 0.7937, 0.7937);
+    Eigen::Vector3f ks = Eigen::Vector3f(0.737, 0.7937, 0.7937);
 
     auto l1 = light{{20, 20, 20}, {500, 500, 500}};
     auto l2 = light{{-20, 20, 0}, {500, 500, 500}};
@@ -150,10 +177,22 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
     Eigen::Vector3f result_color = {0, 0, 0};
     for (auto& light : lights)
     {
-        Eigen::Vector3f Light_diffuse = kd * light.intensity / (light.position - point).dot(light.position - point) * std::max(0.f,normal.dot(light.position - point));
-        Eigen::Vector3f Light_specular = ks * light.intensity / (light.position - point).dot(light.position - point) * std::max(0.f,normal.dot((eye_pos + light.position - point).normalized()));
-        Eigen::Vector3f Light_ambient = ka * amb_light_intensity;
-        result_color += Light_diffuse + Light_specular + Light_ambient;
+        Eigen::Vector3f Light_dir = (light.position - point).normalized();
+        Eigen::Vector3f View_dir = (eye_pos - point).normalized();
+        Eigen::Vector3f Half_dir = (View_dir + Light_dir).normalized();
+
+        Eigen::Vector3f La = ka.cwiseProduct(amb_light_intensity);
+
+        float r2 = (light.position - point).dot(light.position - point);
+        Eigen::Vector3f I_r2 = light.intensity / r2;
+
+        Eigen::Vector3f Ld = kd.cwiseProduct(I_r2);
+        Ld *= std::max(0.0f, normal.normalized().dot(Light_dir));
+
+        Eigen::Vector3f Ls = ks.cwiseProduct(I_r2);
+        Ls *= std::pow(std::max(0.0f, normal.normalized().dot(Half_dir)), p);
+
+        result_color += (La + Ld + Ls);
     }
 
     return result_color * 255.f;

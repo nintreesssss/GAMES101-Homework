@@ -1,2 +1,0 @@
-
-Rasterizing using the phong shader

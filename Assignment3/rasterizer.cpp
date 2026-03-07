@@ -279,7 +279,7 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
     // Use: payload.view_pos = interpolated_shadingcoords;
     // Use: Instead of passing the triangle's color directly to the frame buffer, pass the color to the shaders first to get the final color;
     // Use: auto pixel_color = fragment_shader(payload);
-    auto v = t.toVector4();
+    auto v = t.v;
 
     float min_x = std::min(std::min(v[0].x(),v[1].x()),v[2].x());
     float max_x = std::max(std::max(v[0].x(),v[1].x()),v[2].x());

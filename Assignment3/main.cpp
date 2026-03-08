@@ -218,26 +218,49 @@ Eigen::Vector3f displacement_fragment_shader(const fragment_shader_payload& payl
 
     float kh = 0.2, kn = 0.1;
     
-    // TODO: Implement displacement mapping here
-    // Let n = normal = (x, y, z)
-    // Vector t = (x*y/sqrt(x*x+z*z),sqrt(x*x+z*z),z*y/sqrt(x*x+z*z))
-    // Vector b = n cross product t
-    // Matrix TBN = [t b n]
-    // dU = kh * kn * (h(u+1/w,v)-h(u,v))
-    // dV = kh * kn * (h(u,v+1/h)-h(u,v))
-    // Vector ln = (-dU, -dV, 1)
-    // Position p = p + kn * n * h(u,v)
-    // Normal n = normalize(TBN * ln)
+    float x = normal.x(), y = normal.y(), z = normal.z();
+    Eigen::Vector3f t = Eigen::Vector3f(x*y/sqrt(x*x+z*z),sqrt(x*x+z*z),z*y/sqrt(x*x+z*z));
+    Eigen::Vector3f b = normal.cross(t);
+    Eigen::Matrix3f TBN;
+    float h = payload.texture->height;
+    float w = payload.texture->width;
+    float u = payload.tex_coords.x();
+    float v = payload.tex_coords.y();
 
+    TBN << t.x(), b.x(), normal.x(),
+           t.y(), b.y(), normal.y(),
+           t.z(), b.z(), normal.z();
+    float dU = 0, dV = 0;
+    if (payload.texture && u >= 0.0f && u <= 1.0f && v >= 0.0f && v <= 1.0f)
+    {
+        dU = kh * kn *   (payload.texture->getColor(u + 1.0f / w,v).norm() - payload.texture->getColor(u, v).norm());
+        dV = kh * kn *   (payload.texture->getColor(u, v + 1.0f / h).norm() - payload.texture->getColor(u, v).norm());
+        point += kn * normal * payload.texture->getColor(u, v).norm();
+    }
+
+    Eigen::Vector3f ln = Eigen::Vector3f(-dU, -dV, 1);
+    normal = (TBN * ln).normalized();
 
     Eigen::Vector3f result_color = {0, 0, 0};
 
     for (auto& light : lights)
     {
-        // TODO: For each light source in the code, calculate what the *ambient*, *diffuse*, and *specular* 
-        // components are. Then, accumulate that result on the *result_color* object.
+        Eigen::Vector3f Light_dir = (light.position - point).normalized();
+        Eigen::Vector3f View_dir = (eye_pos - point).normalized();
+        Eigen::Vector3f Half_dir = (View_dir + Light_dir).normalized();
 
+        Eigen::Vector3f La = ka.cwiseProduct(amb_light_intensity);
 
+        float r2 = (light.position - point).dot(light.position - point);
+        Eigen::Vector3f I_r2 = light.intensity / r2;
+
+        Eigen::Vector3f Ld = kd.cwiseProduct(I_r2);
+        Ld *= std::max(0.0f, normal.dot(Light_dir));
+
+        Eigen::Vector3f Ls = ks.cwiseProduct(I_r2);
+        Ls *= std::pow(std::max(0.0f, normal.dot(Half_dir)), p);
+
+        result_color += (Ld + Ls + La);
     }
 
     return result_color * 255.f;
@@ -267,15 +290,27 @@ Eigen::Vector3f bump_fragment_shader(const fragment_shader_payload& payload)
 
     float kh = 0.2, kn = 0.1;
 
-    // TODO: Implement bump mapping here
-    // Let n = normal = (x, y, z)
-    // Vector t = (x*y/sqrt(x*x+z*z),sqrt(x*x+z*z),z*y/sqrt(x*x+z*z))
-    // Vector b = n cross product t
-    // Matrix TBN = [t b n]
-    // dU = kh * kn * (h(u+1/w,v)-h(u,v))
-    // dV = kh * kn * (h(u,v+1/h)-h(u,v))
-    // Vector ln = (-dU, -dV, 1)
-    // Normal n = normalize(TBN * ln)
+    float x = normal.x(), y = normal.y(), z = normal.z();
+    Eigen::Vector3f t = Eigen::Vector3f(x*y/sqrt(x*x+z*z),sqrt(x*x+z*z),z*y/sqrt(x*x+z*z));
+    Eigen::Vector3f b = normal.cross(t);
+    Eigen::Matrix3f TBN;
+    float h = payload.texture->height;
+    float w = payload.texture->width;
+    float u = payload.tex_coords.x();
+    float v = payload.tex_coords.y();
+
+    TBN << t.x(), b.x(), normal.x(),
+           t.y(), b.y(), normal.y(),
+           t.z(), b.z(), normal.z();
+    float dU = 0, dV = 0;
+    if (payload.texture && u >= 0.0f && u <= 1.0f && v >= 0.0f && v <= 1.0f)
+    {
+        dU = kh * kn *   (payload.texture->getColor(u + 1.0f / w,v).norm() - payload.texture->getColor(u, v).norm());
+        dV = kh * kn *   (payload.texture->getColor(u, v + 1.0f / h).norm() - payload.texture->getColor(u, v).norm());
+    }
+
+    Eigen::Vector3f ln = Eigen::Vector3f(-dU, -dV, 1);
+    normal = (TBN * ln).normalized();
 
 
     Eigen::Vector3f result_color = {0, 0, 0};

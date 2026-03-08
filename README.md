@@ -49,5 +49,16 @@
 右边使用了SSAA，左边未使用，可以明显看出SSAA模糊了三角形的锯齿边缘  
 
 ## Assignment 3
+需要注意的是：  
+1. 计算重心坐标时注意透视矫正  
+2. 半程向量，法线等向量需要进行归一化  
+3. (u,v) 坐标在实际应用中可能存在负数或者 > 1（正常取值范围在 0 ~ 1），所以还需要做有效性检测  
+  
+![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment3/images/output_normal.png)  
+![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment3/images/output_phong.png)  
+![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment3/images/output_bump.png)  
+![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment3/images/output_displacement.png)  
+*使用了双线性纹理采样的方法，效果区别不大*
+![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment3/images/output_displacement_2.png)  
 
 

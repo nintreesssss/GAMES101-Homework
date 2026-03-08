@@ -34,10 +34,10 @@ public:
     {
         auto u_img = u * width;
         auto v_img = (1 - v) * height;
-        float u11 = ceil(u_img);
-        float v11 = ceil(v_img);
-        float u01 = floor(u_img);
-        float v01 = floor(v_img);
+        float u11 = std::min((float)width - 1,  ceil(u_img));
+        float v11 = std::min((float)height - 1, ceil(v_img));
+        float u01 = std::max(0.0f, floor(u_img));
+        float v01 = std::max(0.0f, floor(v_img));
         auto color1 = image_data.at<cv::Vec3b>(v01, u11);
         auto color2 = image_data.at<cv::Vec3b>(v01, u01);
         auto color3 = image_data.at<cv::Vec3b>(v11, u11);

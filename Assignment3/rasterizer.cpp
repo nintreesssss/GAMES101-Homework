@@ -278,7 +278,9 @@ void rst::rasterizer::rasterize_triangle(const Triangle& t, const std::array<Eig
             if(!insideTriangle(px,py,t.v)) continue;
             auto [alpha, beta, gamma] = computeBarycentric2D(px, py, t.v);
 
+            //屏幕空间中1/w成线性变化，Z为观察空间（View Space）真实的深度值
             float Z = 1.0 / (alpha / v[0].w() + beta / v[1].w() + gamma / v[2].w());
+            //插值z/w得到屏幕空间的深度值
             float zp = alpha * v[0].z() / v[0].w() + beta * v[1].z() / v[1].w() + gamma * v[2].z() / v[2].w();
             zp *= Z;
             

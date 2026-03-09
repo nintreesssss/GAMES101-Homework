@@ -1,0 +1,35 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "D:/vcpkg/installed/x64-mingw-dynamic/include",
+                "D:/vcpkg/installed/x64-mingw-dynamic/include/eigen3",
+                "D:/vcpkg/installed/x64-mingw-dynamic/include/eigen3/Eigen",
+                "D:/vcpkg/installed/x64-mingw-dynamic/include/opencv4",
+                "D:/vcpkg/installed/x64-windows/include"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "windowsSdkVersion": "10.0.26100.0",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "windows-gcc-x64",
+            "compilerPath": "D:/mingw64/bin/gcc.exe"
+        }
+    ],
+    "version": 4,
+    "browse": {
+        "path": [
+            "${workspaceFolder}",
+            "D:/vcpkg/installed/x64-mingw-dynamic/include",
+            "D:/vcpkg/installed/x64-mingw-dynamic/include/eigen3",
+            "D:/vcpkg/installed/x64-mingw-dynamic/include/opencv4"
+        ],
+        "limitSymbolsToIncludedHeaders": true
+    }
+}

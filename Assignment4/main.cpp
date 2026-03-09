@@ -56,6 +56,32 @@ void bezier(const std::vector<cv::Point2f> &control_points, cv::Mat &window)
     }
 }
 
+void bezier_antialiasing(const std::vector<cv::Point2f> &control_points, cv::Mat &window) 
+{
+    for(double t = 0.0; t <= 1.0; t += 0.001) 
+    {
+        cv::Point2f point = recursive_bezier(control_points, t);
+
+        float x = point.x, y = point.y;
+        int x1 = std::floor(x), y1 = std::floor(y);
+        for(int i = 0; i < 2; i++)
+        {
+            for(int j = 0; j < 2; j++)
+            {
+                int cur_x = x1 + i, cur_y = y1 + j;
+                float center_x = cur_x + 0.5, center_y = cur_y + 0.5;
+
+                float dx = x - center_x, dy = y - center_y;
+                float dist = std::sqrt(dx * dx + dy * dy);
+
+                window.at<cv::Vec3b>(cur_y, cur_x)[1] =fmin(255, window.at<cv::Vec3b>(cur_y, cur_x)[1] + 255 * (1 - sqrt(dist / 2)));
+            }
+        }
+
+        //window.at<cv::Vec3b>(point.y, point.x)[1] = 255;
+    }
+}
+
 int main() 
 {
     cv::Mat window = cv::Mat(700, 700, CV_8UC3, cv::Scalar(0));
@@ -75,7 +101,7 @@ int main()
         if (control_points.size() == 4) 
         {
             //naive_bezier(control_points, window);
-            bezier(control_points, window);
+            bezier_antialiasing(control_points, window);
 
             cv::imshow("Bezier Curve", window);
             cv::imwrite("my_bezier_curve.png", window);

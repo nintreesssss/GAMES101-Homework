@@ -204,14 +204,14 @@ Vector3f castRay(
 }
 
 // [comment]
-// The main render function. This where we iterate over all pixels in the image, generate
-// primary rays and cast these rays into the scene. The content of the framebuffer is
-// saved to a file.
+/* The main render function. This where we iterate over all pixels in the image, generate
+ primary rays and cast these rays into the scene. The content of the framebuffer is
+ saved to a file.*/
 // [/comment]
 void Renderer::Render(const Scene& scene)
 {
     std::vector<Vector3f> framebuffer(scene.width * scene.height);
-
+    //scale 表示fov对图像的影响（成像平面应该缩放的倍数），imageAspectRatio表示图像宽高比
     float scale = std::tan(deg2rad(scene.fov * 0.5f));
     float imageAspectRatio = scene.width / (float)scene.height;
 
@@ -221,16 +221,13 @@ void Renderer::Render(const Scene& scene)
     for (int j = 0; j < scene.height; ++j)
     {
         for (int i = 0; i < scene.width; ++i)
-        {
-            // generate primary ray direction
-            float x;
-            float y;
-            // TODO: Find the x and y positions of the current pixel to get the direction
-            // vector that passes through it.
-            // Also, don't forget to multiply both of them with the variable *scale*, and
-            // x (horizontal) variable with the *imageAspectRatio*            
-
+        {     
+            auto x_ndc = (i + 0.5f) * 2 / (float)scene.width - 1;
+            auto y_ndc = (j + 0.5f) * 2 / (float)scene.height - 1;
+            float x = x_ndc * imageAspectRatio * scale;
+            float y = y_ndc * scale;
             Vector3f dir = Vector3f(x, y, -1); // Don't forget to normalize this direction!
+            dir = normalize(dir);
             framebuffer[m++] = castRay(eye_pos, dir, scene, 0);
         }
         UpdateProgress(j / (float)scene.height);

@@ -9,6 +9,8 @@
 				"-fdiagnostics-color=always",
 				"-g",
 				"-ID:\\vcpkg\\installed\\x64-mingw-dynamic\\include",
+				"-ID:\\vcpkg\\installed\\x64-mingw-dynamic\\include\\opencv4",
+				"-ID:\\vcpkg\\installed\\x64-mingw-dynamic\\include\\opencv4\\opencv2",
 				"${file}",
 				"-LD:\\vcpkg\\installed\\x64-mingw-dynamic\\lib",
 				"-lopencv_core",

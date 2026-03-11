@@ -8,7 +8,7 @@
             "name": "(gdb) 启动",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${fileDirname}/a.exe",
+            "program": "${fileDirname}/main.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

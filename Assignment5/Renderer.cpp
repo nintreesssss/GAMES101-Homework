@@ -225,7 +225,7 @@ void Renderer::Render(const Scene& scene)
             auto x_ndc = (i + 0.5f) * 2 / (float)scene.width - 1;
             auto y_ndc = (j + 0.5f) * 2 / (float)scene.height - 1;
             float x = x_ndc * imageAspectRatio * scale;
-            float y = y_ndc * scale;
+            float y = y_ndc * scale * -1;
             Vector3f dir = Vector3f(x, y, -1); // Don't forget to normalize this direction!
             dir = normalize(dir);
             framebuffer[m++] = castRay(eye_pos, dir, scene, 0);

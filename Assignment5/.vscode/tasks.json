@@ -11,7 +11,7 @@
 				"-ID:\\vcpkg\\installed\\x64-mingw-dynamic\\include",
 				"-ID:\\vcpkg\\installed\\x64-mingw-dynamic\\include\\opencv4",
 				"-ID:\\vcpkg\\installed\\x64-mingw-dynamic\\include\\opencv4\\opencv2",
-				"${file}",
+				"*.cpp",
 				"-LD:\\vcpkg\\installed\\x64-mingw-dynamic\\lib",
 				"-lopencv_core4",
 				"-lopencv_imgproc4",

@@ -48,6 +48,7 @@
 
 右边使用了SSAA，左边未使用，可以明显看出SSAA模糊了三角形的锯齿边缘  
 
+---
 ## Assignment 3
 需要注意的是：  
 1. 计算重心坐标时注意透视矫正  
@@ -58,7 +59,40 @@
 ![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment3/images/output_phong.png)  
 ![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment3/images/output_bump.png)  
 ![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment3/images/output_displacement.png)  
+
 *使用了双线性纹理采样的方法，效果区别不大*
 ![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment3/images/output_displacement_2.png)  
+
+---
+## Assignment 4
+![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment4/image/my_bezier_curve.png)  
+
+*加入了抗锯齿，此处使用的抗锯齿算法是根据采样点距离像素中心点的距离进行上色，同时加粗了曲线*
+![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment4/image/antialiasing.png)  
+
+---
+## Assignment 5
+计算主光线方向，因为相机已经位于原点，所以也就是要计算每一个像素在世界空间中的坐标  
+此处给出线性映射公式：**输出 = 输入-输入下限 / 输入范围 * 输出范围 + 输出下限**  
+需要注意的是，因为像素坐标是从左上方的像素为起点开始遍历的，所以计算y坐标时需要乘以负一来使原点回到左下角  
+```cpp
+//......
+for (int j = 0; j < scene.height; ++j)
+    {
+        for (int i = 0; i < scene.width; ++i)
+        {     
+            auto x_ndc = (i + 0.5f) * 2 / (float)scene.width - 1;
+            auto y_ndc = (j + 0.5f) * 2 / (float)scene.height - 1;
+            float x = x_ndc * imageAspectRatio * scale;
+            float y = y_ndc * scale * -1;
+            Vector3f dir = Vector3f(x, y, -1);
+            dir = normalize(dir); // 注意记得把方向向量归一化
+            framebuffer[m++] = castRay(eye_pos, dir, scene, 0);
+        }
+        UpdateProgress(j / (float)scene.height);
+    }
+```
+![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment5/image/test.png)  
+
 
 

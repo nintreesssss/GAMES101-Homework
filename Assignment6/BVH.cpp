@@ -109,7 +109,7 @@ Intersection BVHAccel::getIntersection(BVHBuildNode* node, const Ray& ray) const
                                         ray.direction.z < 0};
     if (!node->bounds.IntersectP(ray,ray.direction_inv,dirIsNeg))
     {
-        return Intersection();
+        return {};
     }
     
     if (node->object)

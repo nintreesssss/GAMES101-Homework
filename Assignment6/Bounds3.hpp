@@ -108,17 +108,17 @@ inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& invDir,
     float t_z_min = (pMin.z - ray.origin.z) * invDir.z;
     float t_z_max = (pMax.z - ray.origin.z) * invDir.z;
 
-    if (!dirIsNeg[0])
+    if (dirIsNeg[0])
     {
         std::swap(t_x_min, t_x_max);
     }
     
-    if (!dirIsNeg[1])
+    if (dirIsNeg[1])
     {
         std::swap(t_y_min, t_y_max);
     }
     
-    if (!dirIsNeg[2])
+    if (dirIsNeg[2])
     {
         std::swap(t_z_min, t_z_max);
     }
@@ -127,7 +127,7 @@ inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& invDir,
     float t_enter = std::max(std::max(t_x_min, t_y_min), t_z_min);
     float t_exit = std::min(std::min(t_x_max, t_y_max), t_z_max);
 
-    if (t_enter < t_exit && t_exit >= 0)
+    if (t_enter <= t_exit && t_exit >= 0)
     {
         return true;
     }else{

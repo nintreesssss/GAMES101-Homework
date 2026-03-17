@@ -94,5 +94,8 @@ for (int j = 0; j < scene.height; ++j)
 ```
 ![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment5/image/test.png)  
 
-
+---
+## Assignment 6
+根据课件算法公式实现即可，注意框架函数的输入和输出
+![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment6/images/image.png)
 

@@ -97,7 +97,45 @@ inline bool Bounds3::IntersectP(const Ray& ray, const Vector3f& invDir,
     // dirIsNeg: ray direction(x,y,z), dirIsNeg=[int(x>0),int(y>0),int(z>0)], use this to simplify your logic
     // TODO test if ray bound intersects
 
+    //invDir 是方向向量的倒数，乘invDir而不是除以方向向量可以加快计算速度
+    //dirIsNeg是一个数组，表示方向向量的每个分量是否为正，如果为正则为1，否则为0，如果在负方向上，则需要交换t_min和t_max的值
+    float t_x_min = (pMin.x - ray.origin.x) * invDir.x;
+    float t_x_max = (pMax.x - ray.origin.x) * invDir.x;
+
+    float t_y_min = (pMin.y - ray.origin.y) * invDir.y;
+    float t_y_max = (pMax.y - ray.origin.y) * invDir.y;
+
+    float t_z_min = (pMin.z - ray.origin.z) * invDir.z;
+    float t_z_max = (pMax.z - ray.origin.z) * invDir.z;
+
+    if (dirIsNeg[0])
+    {
+        std::swap(t_x_min, t_x_max);
+    }
+    
+    if (dirIsNeg[1])
+    {
+        std::swap(t_y_min, t_y_max);
+    }
+    
+    if (dirIsNeg[2])
+    {
+        std::swap(t_z_min, t_z_max);
+    }
+
+    //进入时间是最晚进入的时间，离开时间是最早离开的时间，如果进入时间晚于离开时间，则没有交点
+    float t_enter = std::max(std::max(t_x_min, t_y_min), t_z_min);
+    float t_exit = std::min(std::min(t_x_max, t_y_max), t_z_max);
+
+    if (t_enter <= t_exit && t_exit >= 0)
+    {
+        return true;
+    }else{
+        return false;
+    }
+    
 }
+
 
 inline Bounds3 Union(const Bounds3& b1, const Bounds3& b2)
 {

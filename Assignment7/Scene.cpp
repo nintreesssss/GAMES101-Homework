@@ -68,7 +68,7 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
 
     if (isect.m->hasEmission()) {
         // 只有第一级射线看到光源才返回亮度
-        // 之后的递归（间接光）如果撞到光源，返回0，避免与直接光采样重复
+        // 之后的间接光如果撞到光源 返回0 避免与直接光采样重复
         return (depth == 0) ? isect.m->getEmission() : Vector3f(0.f);
     }
 

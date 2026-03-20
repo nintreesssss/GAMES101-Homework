@@ -87,7 +87,7 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
     //判断当前着色点与光源采样点之间是否有物体遮挡
     Ray ray_p_to_light(p + N * EPSILON, ws); //处理自遮挡问题，偏移一个很小的距离EPSILON
     Intersection isect_p_to_light = intersect(ray_p_to_light);
-    if (!isect_p_to_light.happened || (isect_p_to_light.coords - p).norm() - (x - p).norm() > -EPSILON) {
+    if (isect_p_to_light.happened && (isect_p_to_light.coords - x).norm() < 1e-2) {
         float cos_theta = std::max(0.f, dotProduct(N, ws));
         float cos_theta_light = std::max(0.f, dotProduct(NN, -ws)); //注意负号
         L_dir = emit * m->eval(ws,wo,N) * cos_theta * cos_theta_light / (pow((x - p).norm(), 2)) / pdf_light;

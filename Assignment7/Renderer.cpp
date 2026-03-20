@@ -26,7 +26,7 @@ void Renderer::Render(const Scene& scene)
     int m = 0;
 
     // change the spp value to change sample ammount
-    int spp = 16;    
+    int spp = 4;    
     int worker_num = 16;
     std::mutex lock;
     std::vector<std::thread> threads(worker_num);

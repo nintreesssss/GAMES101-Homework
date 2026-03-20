@@ -100,7 +100,13 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
         Intersection isect_indir = intersect(ray_indir);
         if (isect_indir.happened && !isect_indir.m->hasEmission())
         {
-            L_indir = castRay(ray_indir,depth + 1) * m->eval(wi, wo, N) * std::max(0.f, dotProduct(N, wi)) / m->pdf(wi, wo, N) / RussianRoulette;
+            float pdf_indir = m->pdf(wi, wo, N);
+            if (pdf_indir > 1e-6f) //避免pdf趋于0导致除数过大产生噪点的问题
+            {
+                L_indir = castRay(ray_indir,depth + 1) * m->eval(wi, wo, N) * std::max(0.f, dotProduct(N, wi)) / m->pdf(wi, wo, N) / RussianRoulette;
+            }else {
+                L_indir = Vector3f(0.f);
+            }
         }
         
     }

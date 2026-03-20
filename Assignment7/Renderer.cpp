@@ -5,6 +5,8 @@
 #include <fstream>
 #include "Scene.hpp"
 #include "Renderer.hpp"
+#include <mutex>
+#include <thread>
 
 
 inline float deg2rad(const float& deg) { return deg * M_PI / 180.0; }
@@ -24,24 +26,36 @@ void Renderer::Render(const Scene& scene)
     int m = 0;
 
     // change the spp value to change sample ammount
-    int spp = 16;
+    int spp = 16;    
+    int worker_num = 16;
+    std::mutex lock;
+    std::vector<std::thread> threads(worker_num);
     std::cout << "SPP: " << spp << "\n";
-    for (uint32_t j = 0; j < scene.height; ++j) {
-        for (uint32_t i = 0; i < scene.width; ++i) {
-            // generate primary ray direction
-            float x = (2 * (i + 0.5) / (float)scene.width - 1) *
-                      imageAspectRatio * scale;
-            float y = (1 - 2 * (j + 0.5) / (float)scene.height) * scale;
+    int height_gap = scene.height / worker_num;
 
-            Vector3f dir = normalize(Vector3f(-x, y, 1));
-            for (int k = 0; k < spp; k++){
-                framebuffer[m] += scene.castRay(Ray(eye_pos, dir), 0) / spp;  
+    auto worker = [&](int start_height, int length) {
+        for (uint32_t j = start_height; j < start_height + length; ++j) {
+            for (uint32_t i = 0; i < scene.width; ++i) {
+                // generate primary ray direction
+                float x = (2 * (i + 0.5) / (float)scene.width - 1) *
+                    imageAspectRatio * scale;
+                float y = (1 - 2 * (j + 0.5) / (float)scene.height) * scale;
+
+                Vector3f dir = normalize(Vector3f(-x, y, 1));
+                int frame_index = j * scene.width + i;
+                float dspp = 1.0f / spp;
+                for (int k = 0; k < spp; k++) {
+                    framebuffer[frame_index] += scene.castRay(Ray(eye_pos, dir), 0) * dspp;
+                }
             }
-            m++;
         }
-        UpdateProgress(j / (float)scene.height);
+    };
+    for (int i = 0; i < worker_num; i++) {
+        threads[i] = std::thread(worker, i * height_gap, height_gap);
     }
-    UpdateProgress(1.f);
+    for (int i = 0; i < threads.size(); i++) {
+        threads[i].join();
+    }
 
     // save framebuffer to file
     FILE* fp = fopen("binary.ppm", "wb");

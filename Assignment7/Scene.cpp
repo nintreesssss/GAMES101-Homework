@@ -93,5 +93,17 @@ Vector3f Scene::castRay(const Ray &ray, int depth) const
         L_dir = emit * m->eval(ws,wo,N) * cos_theta * cos_theta_light / (pow((x - p).norm(), 2)) / pdf_light;
     }
 
+    if (get_random_float() < RussianRoulette)
+    {
+        Vector3f wi = (m->sample(wo, N)).normalized(); //漫反射光线入射方向向量
+        Ray ray_indir(p + N * EPSILON, wi);
+        Intersection isect_indir = intersect(ray_indir);
+        if (isect_indir.happened && !isect_indir.m->hasEmission())
+        {
+            L_indir = castRay(ray_indir,depth + 1) * m->eval(wi, wo, N) * std::max(0.f, dotProduct(N, wi)) / m->pdf(wi, wo, N) / RussianRoulette;
+        }
+        
+    }
     
+    return L_dir + L_indir;
 }

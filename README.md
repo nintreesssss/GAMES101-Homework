@@ -97,5 +97,26 @@ for (int j = 0; j < scene.height; ++j)
 ---
 ## Assignment 6
 根据课件算法公式实现即可，注意框架函数的输入和输出
-![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment6/images/image.png)
+![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment6/images/image.png)  
 
+---
+## Assignment 7
+注意点：  
+1. 根据课程内容所有方向向量需要从当前着色点指向外部，所以光线出射方向（也就是从着色点射向相机的光线）以及后面计算余弦时需要注意添加负号
+2. 为了避免光源光线的自遮挡问题，需要将光源起点向法线方向偏移一个很小的距离
+3. 计算L_dir时需要判断光源是否会被遮挡，采样时可能会撞击到光源本身，需要进行检测判断，否则可能会产生黑色横线
+4. 计算L_indir时用到的pdr极端情况可能会很小趋近于0，如果直接做除法可能会溢出，需要做判断否则会产生噪点
+   
+*路径追踪实现细节较多，此处图像生成使用的SPP为512，使用了16线程渲染*  
+![image](https://github.com/nintreesssss/GAMES101-Homework/blob/main/Assignment7/images/image.png)  
+
+总结一下路径追踪算法的流程：  
+1. 从像素点随机打出光线，判断是否命中物体，若未命中则结束（如果第一级光线直接命中光源返回亮度，否则返回0，避免和后序间接光重复计算
+2. 直接对光源进行采样，得到采样点和着色点的法线，方向向量等信息
+3. 判断当前着色点与光源之间是否有遮挡
+4. 若无遮挡则根据渲染方程计算L_dir
+5. 判断俄罗斯轮盘赌
+6. 根据出射光线和法线采样一根漫反射的入射光线
+7. 对新入射光线进行碰撞检测（向外）
+8. 如果命中非光源，递归使用函数计算入射光线击中新的命中点为原着色点带来的间接光
+9. 叠加间接光和直接光，得到原着色点的颜色  
